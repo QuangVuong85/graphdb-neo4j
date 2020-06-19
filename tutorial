@@ -1,0 +1,128 @@
+------------------------------------------------------------
+https://www.tutorialspoint.com/neo4j
+------------------------------------------------------------
+Table 		<-> 	Graphs
+Rows 		<-> 	Nodes
+Columns, Data 	<-> 	Properties (key-value), its value
+Constraints 	<-> 	Relationships
+Joins 		<->	Traversal
+
+----------------Neo4j Cypher Query Language-----------------
+MATCH, OPTIONAL MATCH, WHERE, START, LOAD CSV
+
+CREATE, MERGE, SET, DELETE, REMOVE, FOREACH, CREATE UNIQUE
+
+RETURN, ORDER BY, LIMIT, SKIP, WITH, UNWIND, UNION, CALL
+
+----------------Neo4j CQL Data Types------------------------
+Boolean
+byte
+short
+int
+long
+float
+double
+char
+String: ""
+
+----------------CQL Operators-------------------------------
+Math: +, -, *, /, ^, %
+Comparison: +, <>, <, >, <=, >=
+Boolean: AND, OR, XOR, NOT
+String: +
+List: + IN [X] [X...Y]
+Regular Expression: =-
+String matching: STARTS WITH, ENDS WITH, CONSTRAINTS
+
+------------------------------------------------------------
+CREATE (node_name);
+CREATE (node1), (node2);
+CREATE (node:label);
+CREATE (node:label{key1:value, key2:value, ...});
+CREATE (node:label{key1:value, key2:value, ...}) RETURN node;
+
+MATCH (n) RETURN n;
+MATCH (n) WHERE n.property="value" DELETE n;
+MATCH (n) DETACH DELETE n;
+
+CREATE (node1)-[label:Rel_Type{key1:value, key2:value, ...}] -> (node2); 
+CREATE (node1)-[r:RelationshipType] -> (node2);
+
+MATCH (a:LabeofNode1), (b:LabeofNode2)
+	WHERE a.name = "nameofnode1" AND b.name = "nameofnode2"
+CREATE (a)-[r:Relation]->(b)
+RETURN a,b
+
+CREATE p = (Node1 {properties})-[:Relationship_Type]
+	(Node2 {properties})[:Relationship_Type]->(Node3 {properties)
+RETURN p;
+
+MERGE (node:label) RETURN node;
+
+MATCH (node:label {properties})
+SET node.property = NULL
+RETURN node;
+
+MATCH (node:label {properties...})
+REMOVE node:label
+RETURN node
+
+MATCH p = (start node)-[*]->(end node)
+WHERE start.node = "node_name" AND end.node = "node_end"
+FOREACH (n IN nodes(p) | SET n.marked = TRUE)
+
+// tim kiem mau duoc mo ta trong do, trong khi
+// su dung null cho cac phan con thieu cua mau
+MATCH (node:label {properties ...})
+OPTIONAL MATCH (node)--> (x)
+RETURN x
+
+// WHERE
+MATCH (label)
+WHERE label.country = "property"
+RETURN label
+
+// count()
+MATCH (n { name: 'A' })-->(x) 
+RETURN n, count(*)
+
+// ORDER BY, LIMIT
+MATCH (n)
+RETURN n.property,...
+ORDER BY n.property DESC|ASC
+LIMIT 3
+
+// SKIP nguoc lai voi LIMIT
+
+// INDEX
+CREATE INDEX ON:label (node);
+DROP INDEX ON:label (node);
+
+// UNIQUE
+MATCH (root {name: "Dhawan"}) 
+CREATE UNIQUE (root)-[:LOVES]-(someone) 
+RETURN someone 
+
+CREATE CONSTRAINT ON (n:player) ASSERT n.id IS UNIQUE
+
+-----------------------------------------------------------------------
+Example:
+
+CREATE p= (Dhawan:player{name: "Shikar Dhawan", YOB: 1985, POB: "Delhi"})-[r:DI]->(Ind:Country {name: "India"})
+RETURN p;
+
+CREATE (Dhawan:player{name: "Shikar Dhawan", YOB: 1985, POB: "Delhi"}) 
+CREATE (Ind:Country {name: "India"})
+CREATE (Dhawan)-[r:DI_relation]->(Ind)
+RETURN Dhawan, Ind;
+
+match (n) where n.name="India" detach delete n;
+
+CREATE (vt:Company {name:"vt"}) -[:owns] -> (tesla:Car {make:"tesla", model:"modelX"}) RETURN vt, tesla;
+
+CREATE p = (Dhawan {name:"Shikar Dhawan"})-[:TOPSCORRER_OF]->(Ind{name: 
+   "India"})-[:WINNER_OF]->(CT2013{name: "Champions Trophy 2013"}) 
+RETURN p 
+
+
+
